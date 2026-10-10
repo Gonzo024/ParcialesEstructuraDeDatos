@@ -20,11 +20,20 @@ public class GestorDistribucion {
 
     // Registro oficial de repartidores
     private final Map<String, Repartidor> repartidoresPorId;
+    private final ServicioDespacho servicioDespacho;
+    private final ServicioAsignacion servicioAsignacion;
+    private final HistorialEntregas historialEntregas;
+    private final Set<String> codigosEntregados;
 
     public GestorDistribucion() {
         paquetes = new ArrayList<>();
         paquetesPorCodigo = new HashMap<>();
         repartidoresPorId = new HashMap<>();
+
+        servicioDespacho = new ServicioDespacho(this);
+        servicioAsignacion = new ServicioAsignacion(this);
+        historialEntregas = new HistorialEntregas();
+        codigosEntregados = new HashSet<>();
     }
 
     // ========== PAQUETES ==========
@@ -132,4 +141,126 @@ public class GestorDistribucion {
 
         return grupos;
     }
+
+
+// ========== DESPACHO Y ASIGNACIÓN ==========
+
+/**
+ * Despacha el siguiente paquete por orden de llegada,
+ * siempre que exista un repartidor compatible.
+ */
+public Paquete despacharPorLlegada() {
+
+    Paquete paquete =
+        servicioDespacho.consultarSiguientePorLlegada();
+
+    return asignarYConfirmarDespacho(paquete);
+}
+
+/**
+ * Despacha el siguiente paquete según su prioridad.
+ */
+public Paquete despacharPorPrioridad() {
+
+    Paquete paquete =
+        servicioDespacho.consultarSiguientePorPrioridad();
+
+    return asignarYConfirmarDespacho(paquete);
+}
+
+/**
+ * Coordina la asignación y la confirmación del despacho.
+ */
+private Paquete asignarYConfirmarDespacho(Paquete paquete) {
+
+    if (paquete == null) {
+        return null;
+    }
+
+    Repartidor repartidor =
+        servicioAsignacion.asignarPaquete(paquete);
+
+    // Si no hay repartidor, el paquete sigue pendiente.
+    if (repartidor == null) {
+        return null;
+    }
+
+    boolean confirmado =
+        servicioDespacho.confirmarDespacho(paquete.getCodigo());
+
+    if (!confirmado) {
+        throw new IllegalStateException(
+            "No fue posible confirmar el despacho del paquete "
+            + paquete.getCodigo());
+    }
+
+    return paquete;
+}
+
+    /**
+    * Consulta qué repartidor tiene asignado un paquete.
+     */
+    public Repartidor consultarAsignacion(String codigoPaquete) {
+        return servicioAsignacion.consultarAsignacion(codigoPaquete);
+    }
+
+    /**
+    * Consulta cuántos paquetes siguen pendientes
+    * de despacho por orden de llegada.
+    */
+    public int cantidadPendientes() {
+     return servicioDespacho.cantidadPendientePorLlegada();
+    }
+
+    /**
+    * Consulta si un paquete ya fue despachado.
+    */
+    public boolean estaDespachado(String codigoPaquete) {
+        return servicioDespacho.estaDespachado(codigoPaquete);
+    }
+
+
+    // ========== ENTREGAS E HISTORIAL ==========
+
+    public boolean registrarEntrega(String codigoPaquete) {
+
+        Paquete paquete = buscarPaquete(codigoPaquete);
+
+        // No se puede entregar un paquete inexistente,
+        // ya entregado o sin asignación activa.
+        if (paquete == null
+                || codigosEntregados.contains(codigoPaquete)
+                || !servicioDespacho.estaDespachado(codigoPaquete)
+                || servicioAsignacion.consultarAsignacion(codigoPaquete) == null) {
+            return false;
+        }
+
+        // Libera un cupo del repartidor.
+        boolean completada =
+                servicioAsignacion.completarEntrega(codigoPaquete);
+
+        if (!completada) {
+            return false;
+        }
+
+        // Conserva el orden real de entrega.
+        codigosEntregados.add(codigoPaquete);
+        historialEntregas.registrarEntrega(paquete);
+
+        return true;
+    }
+
+    public int cantidadEntregas() {
+        return historialEntregas.cantidadEntregas();
+    }
+
+    public void mostrarHistorial() {
+        historialEntregas.mostrar();
+    }
+
+    public boolean estaEntregado(String codigoPaquete) {
+        return codigosEntregados.contains(codigoPaquete);
+    }
+
+
 }

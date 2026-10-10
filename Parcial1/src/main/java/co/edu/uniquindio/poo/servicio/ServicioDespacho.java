@@ -104,4 +104,62 @@ public class ServicioDespacho {
     public boolean estaDespachado(String codigo) {
         return codigosDespachados.contains(codigo);
     }
+
+
+    /**
+    * Consulta el siguiente paquete por orden de llegada
+    * sin marcarlo como despachado.
+    */
+    public Paquete consultarSiguientePorLlegada() {
+        sincronizarPaquetes();
+
+        while (!colaPorLlegada.isEmpty()) {
+            Paquete paquete = colaPorLlegada.peek();
+
+         if (codigosDespachados.contains(paquete.getCodigo())) {
+                colaPorLlegada.poll();
+            } else {
+                return paquete;
+            }
+        }
+
+     return null;
+    }
+
+    /**
+    * Consulta el siguiente paquete por prioridad
+    * sin marcarlo como despachado.
+    */
+    public Paquete consultarSiguientePorPrioridad() {
+     sincronizarPaquetes();
+
+        while (!colaPorPrioridad.isEmpty()) {
+            Paquete paquete = colaPorPrioridad.peek();
+
+            if (codigosDespachados.contains(paquete.getCodigo())) {
+                colaPorPrioridad.poll();
+            } else {
+                return paquete;
+         }
+     }
+
+     return null;
+    }
+
+    /**
+    * Confirma el despacho únicamente después
+    * de una asignación exitosa.
+    */
+    public boolean confirmarDespacho(String codigo) {
+        sincronizarPaquetes();
+
+        if (!codigosEncolados.contains(codigo)
+             || codigosDespachados.contains(codigo)) {
+         return false;
+        }
+
+        codigosDespachados.add(codigo);
+        return true;
+    }
+
 }
