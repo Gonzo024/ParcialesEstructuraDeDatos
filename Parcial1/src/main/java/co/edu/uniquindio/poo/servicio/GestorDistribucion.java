@@ -22,6 +22,8 @@ public class GestorDistribucion {
     private final Map<String, Repartidor> repartidoresPorId;
     private final ServicioDespacho servicioDespacho;
     private final ServicioAsignacion servicioAsignacion;
+    private final HistorialEntregas historialEntregas;
+    private final Set<String> codigosEntregados;
 
     public GestorDistribucion() {
         paquetes = new ArrayList<>();
@@ -30,6 +32,8 @@ public class GestorDistribucion {
 
         servicioDespacho = new ServicioDespacho(this);
         servicioAsignacion = new ServicioAsignacion(this);
+        historialEntregas = new HistorialEntregas();
+        codigosEntregados = new HashSet<>();
     }
 
     // ========== PAQUETES ==========
@@ -214,5 +218,49 @@ private Paquete asignarYConfirmarDespacho(Paquete paquete) {
     public boolean estaDespachado(String codigoPaquete) {
         return servicioDespacho.estaDespachado(codigoPaquete);
     }
+
+
+    // ========== ENTREGAS E HISTORIAL ==========
+
+    public boolean registrarEntrega(String codigoPaquete) {
+
+        Paquete paquete = buscarPaquete(codigoPaquete);
+
+        // No se puede entregar un paquete inexistente,
+        // ya entregado o sin asignación activa.
+        if (paquete == null
+                || codigosEntregados.contains(codigoPaquete)
+                || !servicioDespacho.estaDespachado(codigoPaquete)
+                || servicioAsignacion.consultarAsignacion(codigoPaquete) == null) {
+            return false;
+        }
+
+        // Libera un cupo del repartidor.
+        boolean completada =
+                servicioAsignacion.completarEntrega(codigoPaquete);
+
+        if (!completada) {
+            return false;
+        }
+
+        // Conserva el orden real de entrega.
+        codigosEntregados.add(codigoPaquete);
+        historialEntregas.registrarEntrega(paquete);
+
+        return true;
+    }
+
+    public int cantidadEntregas() {
+        return historialEntregas.cantidadEntregas();
+    }
+
+    public void mostrarHistorial() {
+        historialEntregas.mostrar();
+    }
+
+    public boolean estaEntregado(String codigoPaquete) {
+        return codigosEntregados.contains(codigoPaquete);
+    }
+
 
 }

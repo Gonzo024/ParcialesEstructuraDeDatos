@@ -36,6 +36,8 @@ public class Main {
                     case 8 -> despacharPorPrioridad(gestor);
                     case 9 -> consultarAsignacion(gestor);
                     case 10 -> mostrarPendientes(gestor);
+                    case 11 -> registrarEntrega(gestor);
+                    case 12 -> mostrarHistorial(gestor);
                     case 0 -> System.out.println("¡Hasta pronto!");
                     default -> System.out.println("Opción no válida.");
                 }
@@ -60,6 +62,8 @@ public class Main {
         System.out.println("8. Despachar por prioridad");
         System.out.println("9. Consultar asignación");
         System.out.println("10. Ver cantidad de pendientes");
+        System.out.println("11. Registrar entrega");
+        System.out.println("12. Mostrar historial de entregas");
         System.out.println("0. Salir");
     }
 
@@ -214,4 +218,30 @@ public class Main {
             }
         }
     }
+
+
+    private static void registrarEntrega(GestorDistribucion gestor) {
+
+        String codigo = leerTexto("Código del paquete entregado: ");
+
+        if (gestor.registrarEntrega(codigo)) {
+            System.out.println("Entrega registrada correctamente.");
+            System.out.println("Cupo del repartidor liberado.");
+        } else {
+            System.out.println(
+                "No se puede registrar la entrega. "
+                + "Verifica que el paquete esté despachado, "
+                + "tenga asignación activa y no se haya entregado antes.");
+        }
+    }
+
+    private static void mostrarHistorial(GestorDistribucion gestor) {
+
+        System.out.println("\n--- Historial de entregas ---");
+        System.out.println("Total entregados: "
+                + gestor.cantidadEntregas());
+
+        gestor.mostrarHistorial();
+    }
+
 }
