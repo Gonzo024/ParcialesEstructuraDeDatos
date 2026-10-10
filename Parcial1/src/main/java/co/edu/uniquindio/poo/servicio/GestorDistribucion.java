@@ -20,11 +20,16 @@ public class GestorDistribucion {
 
     // Registro oficial de repartidores
     private final Map<String, Repartidor> repartidoresPorId;
+    private final ServicioDespacho servicioDespacho;
+    private final ServicioAsignacion servicioAsignacion;
 
     public GestorDistribucion() {
         paquetes = new ArrayList<>();
         paquetesPorCodigo = new HashMap<>();
         repartidoresPorId = new HashMap<>();
+
+        servicioDespacho = new ServicioDespacho(this);
+        servicioAsignacion = new ServicioAsignacion(this);
     }
 
     // ========== PAQUETES ==========
@@ -132,4 +137,82 @@ public class GestorDistribucion {
 
         return grupos;
     }
+
+
+// ========== DESPACHO Y ASIGNACIÓN ==========
+
+/**
+ * Despacha el siguiente paquete por orden de llegada,
+ * siempre que exista un repartidor compatible.
+ */
+public Paquete despacharPorLlegada() {
+
+    Paquete paquete =
+        servicioDespacho.consultarSiguientePorLlegada();
+
+    return asignarYConfirmarDespacho(paquete);
+}
+
+/**
+ * Despacha el siguiente paquete según su prioridad.
+ */
+public Paquete despacharPorPrioridad() {
+
+    Paquete paquete =
+        servicioDespacho.consultarSiguientePorPrioridad();
+
+    return asignarYConfirmarDespacho(paquete);
+}
+
+/**
+ * Coordina la asignación y la confirmación del despacho.
+ */
+private Paquete asignarYConfirmarDespacho(Paquete paquete) {
+
+    if (paquete == null) {
+        return null;
+    }
+
+    Repartidor repartidor =
+        servicioAsignacion.asignarPaquete(paquete);
+
+    // Si no hay repartidor, el paquete sigue pendiente.
+    if (repartidor == null) {
+        return null;
+    }
+
+    boolean confirmado =
+        servicioDespacho.confirmarDespacho(paquete.getCodigo());
+
+    if (!confirmado) {
+        throw new IllegalStateException(
+            "No fue posible confirmar el despacho del paquete "
+            + paquete.getCodigo());
+    }
+
+    return paquete;
+}
+
+    /**
+    * Consulta qué repartidor tiene asignado un paquete.
+     */
+    public Repartidor consultarAsignacion(String codigoPaquete) {
+        return servicioAsignacion.consultarAsignacion(codigoPaquete);
+    }
+
+    /**
+    * Consulta cuántos paquetes siguen pendientes
+    * de despacho por orden de llegada.
+    */
+    public int cantidadPendientes() {
+     return servicioDespacho.cantidadPendientePorLlegada();
+    }
+
+    /**
+    * Consulta si un paquete ya fue despachado.
+    */
+    public boolean estaDespachado(String codigoPaquete) {
+        return servicioDespacho.estaDespachado(codigoPaquete);
+    }
+
 }
