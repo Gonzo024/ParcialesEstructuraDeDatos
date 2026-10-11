@@ -8,6 +8,7 @@ public class Repartidor {
     private String zona;
     private boolean disponible;
     private int paquetesAsignados;
+    private boolean suspendidoManualmente;
 
     // CONSTANTE
     private static final int MAX_PAQUETES = 5;
@@ -28,6 +29,7 @@ public class Repartidor {
 
         this.disponible = true;
         this.paquetesAsignados = 0;
+        this.suspendidoManualmente = false;
     }
 
     // GETTERS
@@ -69,12 +71,14 @@ public class Repartidor {
     }
 
     public void setDisponible(boolean disponible) {
-        if (disponible && paquetesAsignados >= MAX_PAQUETES) {
-            throw new IllegalStateException(
-                    "El repartidor alcanzó su capacidad máxima");
-        }
-        this.disponible = disponible;
+    if (disponible && paquetesAsignados >= MAX_PAQUETES) {
+        throw new IllegalStateException(
+                "El repartidor alcanzó su capacidad máxima");
     }
+
+    this.suspendidoManualmente = !disponible;
+    this.disponible = disponible;
+}
 
     // VERIFICAR CAPACIDAD
     public boolean puedeRecibirPaquete() {
@@ -97,14 +101,14 @@ public class Repartidor {
 
     // REGISTRAR UNA ENTREGA
     public void completarEntrega() {
-        if (paquetesAsignados <= 0) {
-            throw new IllegalStateException(
-                    "El repartidor no tiene paquetes asignados");
-        }
-
-        paquetesAsignados--;
-        disponible = true;
+    if (paquetesAsignados <= 0) {
+        throw new IllegalStateException(
+                "El repartidor no tiene paquetes asignados");
     }
+
+    paquetesAsignados--;
+    disponible = !suspendidoManualmente;
+}
 
     // REPRESENTACIÓN EN TEXTO
     @Override
