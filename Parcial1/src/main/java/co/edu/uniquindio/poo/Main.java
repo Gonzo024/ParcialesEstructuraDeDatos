@@ -4,6 +4,7 @@ import co.edu.uniquindio.poo.modelo.Paquete;
 import co.edu.uniquindio.poo.modelo.Repartidor;
 import co.edu.uniquindio.poo.servicio.DatosIniciales;
 import co.edu.uniquindio.poo.servicio.GestorDistribucion;
+import co.edu.uniquindio.poo.algoritmos.AlgoritmosPaquetes;
 
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,10 @@ public class Main {
                     case 10 -> mostrarPendientes(gestor);
                     case 11 -> registrarEntrega(gestor);
                     case 12 -> mostrarHistorial(gestor);
+                    case 13 -> buscarPorBusquedaBinaria(gestor);
+                    case 14 -> calcularPesoPorDestino(gestor);
+                    case 15 -> contarPaquetesPorPrioridad(gestor);
+                    case 16 -> mostrarPaqueteMasPesado(gestor);
                     case 0 -> System.out.println("¡Hasta pronto!");
                     default -> System.out.println("Opción no válida.");
                 }
@@ -64,6 +69,10 @@ public class Main {
         System.out.println("10. Ver cantidad de pendientes");
         System.out.println("11. Registrar entrega");
         System.out.println("12. Mostrar historial de entregas");
+        System.out.println("13. Buscar paquete por búsqueda binaria");
+        System.out.println("14. Calcular peso total por destino (recursividad)");
+        System.out.println("15. Contar paquetes por prioridad mínima (recursividad)");
+        System.out.println("16. Encontrar paquete más pesado (divide y vencerás)");
         System.out.println("0. Salir");
     }
 
@@ -243,5 +252,55 @@ public class Main {
 
         gestor.mostrarHistorial();
     }
+
+
+private static void buscarPorBusquedaBinaria(GestorDistribucion gestor) {
+    String codigo = leerTexto("Código del paquete: ");
+
+    List<Paquete> ordenados =
+            AlgoritmosPaquetes.ordenarPorCodigo(gestor.obtenerPaquetes());
+
+    Paquete resultado =
+            AlgoritmosPaquetes.busquedaBinariaPorCodigo(ordenados, codigo);
+
+    if (resultado == null) {
+        System.out.println("Paquete no encontrado.");
+    } else {
+        System.out.println("Paquete encontrado: " + resultado);
+    }
+}
+
+private static void calcularPesoPorDestino(GestorDistribucion gestor) {
+    String destino = leerTexto("Municipio de destino: ");
+
+    double peso =
+            AlgoritmosPaquetes.pesoTotalPorDestino(
+                    gestor.obtenerPaquetes(), destino);
+
+    System.out.printf("Peso total para %s: %.2f kg%n", destino, peso);
+}
+
+private static void contarPaquetesPorPrioridad(GestorDistribucion gestor) {
+    int prioridad = leerEntero("Prioridad mínima (0 a 5): ");
+
+    int cantidad =
+            AlgoritmosPaquetes.contarPrioridadMinima(
+                    gestor.obtenerPaquetes(), prioridad);
+
+    System.out.println("Paquetes con prioridad igual o superior: "
+            + cantidad);
+}
+
+private static void mostrarPaqueteMasPesado(GestorDistribucion gestor) {
+    Paquete paquete =
+            AlgoritmosPaquetes.paqueteMasPesado(gestor.obtenerPaquetes());
+
+    if (paquete == null) {
+        System.out.println("No hay paquetes registrados.");
+    } else {
+        System.out.println("Paquete más pesado: " + paquete);
+    }
+}
+
 
 }
