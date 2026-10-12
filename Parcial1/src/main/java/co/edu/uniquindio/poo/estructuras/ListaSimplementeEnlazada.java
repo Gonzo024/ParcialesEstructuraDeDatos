@@ -1,23 +1,11 @@
 package co.edu.uniquindio.poo.estructuras;
 
 /**
- * Lista simplemente enlazada genérica, implementada desde cero (sin usar
- * ArrayList, LinkedList ni otras colecciones de Java para guardar datos).
  *
  * Funcionamiento:
  *  - Los elementos se guardan en nodos conectados uno detrás de otro.
  *  - nodoPrimero apunta al inicio de la lista y nodoUltimo al final.
  *  - tamanio lleva la cuenta de cuántos elementos hay.
- *
- * Se guarda nodoUltimo para que agregar al final no
- * tenga que recorrer la lista (cuesta O(1)). El historial de entregas solo
- * agrega al final, por eso conviene.
- *
- * Complejidad: agregar O(1), obtener O(n), eliminar O(n),
- * tamanio y estaVacia O(1).
- *
- * Implementa Coleccion<T> (el contrato de operaciones) e Iterable<T> para
- * poder recorrerla con for-each sin que el código externo conozca los nodos.
  */
 
 import java.util.Iterator;
