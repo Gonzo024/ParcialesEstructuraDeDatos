@@ -5,6 +5,10 @@ import co.edu.uniquindio.poo.modelo.Repartidor;
 import co.edu.uniquindio.poo.servicio.DatosIniciales;
 import co.edu.uniquindio.poo.servicio.GestorDistribucion;
 import co.edu.uniquindio.poo.algoritmos.AlgoritmosPaquetes;
+import co.edu.uniquindio.poo.algoritmos.ComparadorPrioridad;
+import co.edu.uniquindio.poo.algoritmos.ComparadorPeso;
+import co.edu.uniquindio.poo.algoritmos.ComparadorTiempo;
+import java.util.ArrayList;
 
 import java.util.List;
 import java.util.Map;
@@ -43,6 +47,10 @@ public class Main {
                     case 14 -> calcularPesoPorDestino(gestor);
                     case 15 -> contarPaquetesPorPrioridad(gestor);
                     case 16 -> mostrarPaqueteMasPesado(gestor);
+                    //estoy agregando los otros case
+                    case 17 -> mostrarPaquetesOrdenadosPorPrioridad(gestor);
+                    case 18 -> mostrarPaquetesOrdenadosPorPeso(gestor);
+                    case 19 -> mostrarPaquetesOrdenadosPorTiempo(gestor);
                     case 0 -> System.out.println("¡Hasta pronto!");
                     default -> System.out.println("Opción no válida.");
                 }
@@ -73,6 +81,10 @@ public class Main {
         System.out.println("14. Calcular peso total por destino (recursividad)");
         System.out.println("15. Contar paquetes por prioridad mínima (recursividad)");
         System.out.println("16. Encontrar paquete más pesado (divide y vencerás)");
+        // agregue estos Ordenar paquetes
+        System.out.println("17. Ordenar paquetes por prioridad");
+        System.out.println("18. Ordenar paquetes por peso");
+        System.out.println("19. Ordenar paquetes por tiempo estimado");
         System.out.println("0. Salir");
     }
 
@@ -301,6 +313,49 @@ private static void mostrarPaqueteMasPesado(GestorDistribucion gestor) {
         System.out.println("Paquete más pesado: " + paquete);
     }
 }
+    private static void mostrarPaquetesOrdenadosPorPrioridad(
+            GestorDistribucion gestor) {
+
+        List<Paquete> paquetes =
+                new ArrayList<>(gestor.obtenerPaquetes());
+
+        paquetes.sort(new ComparadorPrioridad());
+
+        System.out.println("\n--- Paquetes por prioridad ---");
+        for (Paquete paquete : paquetes) {
+            System.out.println(paquete);
+        }
+    }
+
+    // se agregaron estos metodos para mostrar los paquetes
+
+    private static void mostrarPaquetesOrdenadosPorPeso(
+            GestorDistribucion gestor) {
+
+        List<Paquete> paquetes =
+                new ArrayList<>(gestor.obtenerPaquetes());
+
+        paquetes.sort(new ComparadorPeso());
+
+        System.out.println("\n--- Paquetes por peso ---");
+        for (Paquete paquete : paquetes) {
+            System.out.println(paquete);
+        }
+    }
+
+    private static void mostrarPaquetesOrdenadosPorTiempo(
+            GestorDistribucion gestor) {
+
+        List<Paquete> paquetes =
+                new ArrayList<>(gestor.obtenerPaquetes());
+
+        paquetes.sort(new ComparadorTiempo());
+
+        System.out.println("\n--- Paquetes por tiempo estimado ---");
+        for (Paquete paquete : paquetes) {
+            System.out.println(paquete);
+        }
+    }
 
 
 }
