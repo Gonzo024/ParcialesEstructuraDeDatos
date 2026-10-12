@@ -23,6 +23,7 @@ public class HistorialEntregas {
 
     public void mostrar() {
         for (Paquete p : historial) {
+        System.out.println(p);
         }
     }
 }
