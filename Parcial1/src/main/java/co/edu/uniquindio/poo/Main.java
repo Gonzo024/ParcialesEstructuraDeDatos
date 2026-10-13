@@ -47,7 +47,6 @@ public class Main {
                     case 14 -> calcularPesoPorDestino(gestor);
                     case 15 -> contarPaquetesPorPrioridad(gestor);
                     case 16 -> mostrarPaqueteMasPesado(gestor);
-                    //estoy agregando los otros case
                     case 17 -> mostrarPaquetesOrdenadosPorPrioridad(gestor);
                     case 18 -> mostrarPaquetesOrdenadosPorPeso(gestor);
                     case 19 -> mostrarPaquetesOrdenadosPorTiempo(gestor);
