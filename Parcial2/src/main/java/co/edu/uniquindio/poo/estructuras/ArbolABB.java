@@ -1,6 +1,8 @@
 
 package co.edu.uniquindio.poo.estructuras;
 
+import java.util.ArrayList;
+
 public class ArbolABB<T extends Comparable<T>> {
 
     private NodoArbol<T> raiz;
@@ -44,4 +46,85 @@ public class ArbolABB<T extends Comparable<T>> {
 
         return actual;
     }
+
+
+    // ==================== PREORDEN ====================
+
+    public ArrayList<T> preorden() {
+        ArrayList<T> resultado = new ArrayList<>();
+        recorrerPreorden(raiz, resultado);
+        return resultado;
+    }
+
+    private void recorrerPreorden(NodoArbol<T> actual, ArrayList<T> resultado) {
+        if (actual != null) {
+            resultado.add(actual.getDato());
+            recorrerPreorden(actual.getIzquierdo(), resultado);
+            recorrerPreorden(actual.getDerecho(), resultado);
+        }
+    }
+
+    // ==================== INORDEN ====================
+
+    public ArrayList<T> inorden() {
+        ArrayList<T> resultado = new ArrayList<>();
+        recorrerInorden(raiz, resultado);
+        return resultado;
+    }
+
+    private void recorrerInorden(NodoArbol<T> actual, ArrayList<T> resultado) {
+        if (actual != null) {
+            recorrerInorden(actual.getIzquierdo(), resultado);
+            resultado.add(actual.getDato());
+            recorrerInorden(actual.getDerecho(), resultado);
+        }
+    }
+
+    // ==================== POSTORDEN ====================
+
+    public ArrayList<T> postorden() {
+        ArrayList<T> resultado = new ArrayList<>();
+        recorrerPostorden(raiz, resultado);
+        return resultado;
+    }
+
+    private void recorrerPostorden(NodoArbol<T> actual, ArrayList<T> resultado) {
+        if (actual != null) {
+            recorrerPostorden(actual.getIzquierdo(), resultado);
+            recorrerPostorden(actual.getDerecho(), resultado);
+            resultado.add(actual.getDato());
+        }
+    }
+
+
+    // ==================== AMPLITUD (BFS) ====================
+
+    public ArrayList<T> amplitud() {
+        ArrayList<T> resultado = new ArrayList<>();
+
+        if (raiz == null) {
+            return resultado;
+        }
+
+        Cola<NodoArbol<T>> cola = new Cola<>();
+        cola.encolar(raiz);
+
+        while (!cola.estaVacia()) {
+            NodoArbol<T> actual = cola.desencolar();
+
+            resultado.add(actual.getDato());
+
+            if (actual.getIzquierdo() != null) {
+                cola.encolar(actual.getIzquierdo());
+            }
+
+            if (actual.getDerecho() != null) {
+                cola.encolar(actual.getDerecho());
+            }
+        }
+
+        return resultado;
+    }
+
+
 }
