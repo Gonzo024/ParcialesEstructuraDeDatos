@@ -110,7 +110,6 @@ public class Repartidor {
     disponible = !suspendidoManualmente;
 }
 
-    // REPRESENTACIÓN EN TEXTO
     @Override
     public String toString() {
         return "Repartidor{" +
