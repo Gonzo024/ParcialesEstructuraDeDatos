@@ -71,6 +71,17 @@ public class GestorDistribucion {
         return paquetes.size();
     }
 
+    public static void ListaPaquetes(List<Paquete> paquetes) {
+        //caso base
+        if (paquetes == null) {
+            return 0;
+
+        }
+        if (paquetes.getPeso()
+
+        }
+    }
+
     // ========== REPARTIDORES ==========
 
     public void registrarRepartidor(Repartidor repartidor) {

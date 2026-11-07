@@ -86,7 +86,6 @@ public class Paquete implements Comparable<Paquete> {
         return this.codigo.compareTo(otro.codigo);
     }
 
-    // REPRESENTACIÓN EN TEXTO
     @Override
     public String toString() {
         return "Paquete{" +
