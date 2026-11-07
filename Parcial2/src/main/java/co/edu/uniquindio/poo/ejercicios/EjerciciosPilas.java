@@ -50,4 +50,53 @@ public class EjerciciosPilas {
 
         return resultado;
     }
+
+
+    // PUNTO 2: Obtener un segmento del historial
+
+    public static <T> Pila<T> obtenerSegmento(
+            Pila<T> original, int inicio, int fin) {
+
+        Pila<T> resultado = new Pila<>();
+
+        // Caso 1: validar las posiciones
+        if (original == null || inicio < 1 ||
+                inicio > fin || fin > original.tamanio()) {
+            return resultado;
+        }
+
+        Pila<T> auxiliar = new Pila<>();
+        Pila<T> segmento = new Pila<>();
+
+        int posicion = 1;
+
+        // Recorremos la pila desde la cima
+        while (!original.estaVacia()) {
+
+            T actual = original.desapilar();
+
+            // Guardamos para restaurar la pila original
+            auxiliar.apilar(actual);
+
+            // Seleccionamos las posiciones solicitadas
+            if (posicion >= inicio && posicion <= fin) {
+                segmento.apilar(actual);
+            }
+
+            posicion++;
+        }
+
+        // Restauramos la pila original
+        while (!auxiliar.estaVacia()) {
+            original.apilar(auxiliar.desapilar());
+        }
+
+        // Organizamos el segmento en el orden correcto
+        while (!segmento.estaVacia()) {
+            resultado.apilar(segmento.desapilar());
+        }
+
+        return resultado;
+    }
+
 }
